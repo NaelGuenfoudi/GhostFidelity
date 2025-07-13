@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %}Accueil - GhostFidelity{% endblock %}
+
+{% block content %}
+<div class="page active" id="home">
+    <div class="ghost-logo">
+        <h1>GHOST FIDELITY</h1>
+        <p>Programme de fidélité premium</p>
+    </div>
+     {% if not session.get('admin') %}
+    <div class="card">
+        <h2 style="text-align: center; margin-bottom: 15px; font-weight: 300; font-size: 20px;">Bienvenue</h2>
+        <p style="text-align: center; color: #888; margin-bottom: 20px; font-size: 14px;">
+            Découvrez notre programme de fidélité exclusif. Collectez des visites et bénéficiez de récompenses exceptionnelles.
+        </p>
+        
+        <form method="POST" action="/login-admin">
+            <div class="form-group">
+                <label for="admin-login">Code d'accès administrateur</label>
+                <input type="password" name="password" id="admin-login" placeholder="Entrez votre code d'accès">
+            </div>
+            <div style="text-align: center;">
+                <button class="btn btn-primary" type="submit">Connexion admin</button>
+            </div>
+</form>
+
+    </div>
+    {% endif %}
+    
+    <div class="client-access-mobile">
+        <h3>Accès client</h3>
+        <p>Vous avez déjà un compte ? Entrez votre identifiant pour consulter vos visites</p>
+        <div class="form-group">
+            <input type="text" id="client-uuid" placeholder="Identifiant client">
+        </div>
+        <div style="text-align: center;">
+            <button class="btn">Accéder à mon compte</button>
+        </div>
+    </div>
+</div>
+{% endblock %}

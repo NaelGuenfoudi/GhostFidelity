@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <title>{% block title %}GhostFidelity Mobile{% endblock %}</title>
+
+    <!-- Si tu ajoutes Tailwind plus tard, tu peux charger ici -->
+    
+</head>
+<body>
+    <div class="container">
+        <div class="page-selector">
+    <a href="/"><button class="page-btn {% if request.path == '/' %}active{% endif %}">Accueil</button></a>
+    <a href="/scan"><button class="page-btn {% if request.path == '/scan' %}active{% endif %}">Scanner un Qr Code</button></a>
+
+    {% if session.get('admin') %}
+        <a href="/admin"><button class="page-btn {% if request.path.startswith('/admin') and not request.path.startswith('/admin/create-client') %}active{% endif %}">Espace admin</button></a>
+        <a href="/admin/create-client"><button class="page-btn {% if request.path == '/admin/create-client' %}active{% endif %}">Créer un client</button></a>
+        <a href="{{ url_for('admin.logout') }}"><button class="page-btn ">Déconnexion</button></a>
+    {% endif %}
+
+    
+</div>
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="flash-container">
+      {% for category, message in messages %}
+        <div class="flash flash-{{ category }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+
+
+        {% block content %}
+        <!-- Le contenu de chaque page vient ici -->
+        {% endblock %}
+    </div>
+</body>
+</html>

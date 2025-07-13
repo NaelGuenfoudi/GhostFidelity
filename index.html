@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GhostFidelity Mobile - Maquettes</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f1a0f 0%, #1a2a1a 100%);
+            color: #f0f5f0;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 15px;
+        }
+
+        .page-selector {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .page-btn {
+            padding: 8px 12px;
+            background: linear-gradient(135deg, #2a3a2a 0%, #1a2a1a 100%);
+            border: 1px solid #4a5a4a;
+            color: #f0f5f0;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 11px;
+            font-weight: 500;
+            text-align: center;
+            flex: 1;
+            min-width: 60px;
+        }
+
+        .page-btn:hover, .page-btn.active {
+            background: linear-gradient(135deg, #3a4a3a 0%, #2a3a2a 100%);
+            border-color: #d4af37;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);
+        }
+
+        .page {
+            display: none;
+            background: linear-gradient(135deg, #1a2a1a 0%, #0f1f0f 100%);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 15px 40px rgba(0,20,0,0.5);
+            border: 1px solid #4a5a4a;
+            margin-bottom: 20px;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 300;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #f0f5f0;
+            letter-spacing: 1px;
+        }
+
+        .ghost-logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .ghost-logo h1 {
+            font-size: 32px;
+            font-weight: 100;
+            margin-bottom: 8px;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, #d4af37 0%, #f0f5f0 50%, #d4af37 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .ghost-logo p {
+            font-size: 14px;
+            color: #a0b0a0;
+            font-weight: 300;
+            letter-spacing: 0.5px;
+        }
+
+        .card {
+            background: linear-gradient(135deg, #2a3a2a 0%, #1a2a1a 100%);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border: 1px solid #4a5a4a;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.15);
+            border-color: #d4af37;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #3a4a3a 0%, #2a3a2a 100%);
+            color: #f0f5f0;
+            border: 1px solid #5a6a5a;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-block;
+            margin: 3px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .btn:hover {
+            background: linear-gradient(135deg, #4a5a4a 0%, #3a4a3a 100%);
+            border-color: #d4af37;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%);
+            border-color: #d4af37;
+            color: #1a2a1a;
+            font-weight: 600;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #e6c555 0%, #d4af37 100%);
+            border-color: #e6c555;
+            color: #0f1f0f;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #5a3a2a 0%, #4a2a1a 100%);
+            border-color: #6a4a3a;
+        }
+
+        .btn-small {
+            padding: 8px 12px;
+            font-size: 12px;
+            width: auto;
+            display: inline-block;
+            margin: 2px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            color: #ccc;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            background: #2a3a2a;
+            border: 1px solid #4a5a4a;
+            border-radius: 6px;
+            color: #f0f5f0;
+            font-size: 14px;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #d4af37;
+            box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 16px;
+            background: #3a4a3a;
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #d4af37 0%, #e6c555 100%);
+            transition: width 0.3s ease;
+        }
+
+        .qr-code {
+            width: 150px;
+            height: 150px;
+            background: #ffffff;
+            border-radius: 8px;
+            margin: 15px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #000;
+            font-size: 12px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .client-info {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .client-info h2 {
+            font-size: 24px;
+            font-weight: 300;
+            margin-bottom: 8px;
+            color: #f0f5f0;
+        }
+
+        .client-info p {
+            color: #a0b0a0;
+            font-size: 14px;
+        }
+
+        .visits-counter {
+            text-align: center;
+            margin: 25px 0;
+        }
+
+        .visits-counter h3 {
+            font-size: 18px;
+            font-weight: 300;
+            margin-bottom: 8px;
+        }
+
+        .visits-counter .count {
+            font-size: 36px;
+            font-weight: 100;
+            color: #d4af37;
+            margin: 10px 0;
+        }
+
+        .search-bar {
+            width: 100%;
+            padding: 12px;
+            background: #2a3a2a;
+            border: 1px solid #4a5a4a;
+            border-radius: 8px;
+            color: #f0f5f0;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .search-bar:focus {
+            outline: none;
+            border-color: #d4af37;
+            box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2);
+        }
+
+        .client-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .client-item {
+            background: linear-gradient(135deg, #2a3a2a 0%, #1a2a1a 100%);
+            border-radius: 8px;
+            padding: 15px;
+            border: 1px solid #4a5a4a;
+            transition: all 0.3s ease;
+        }
+
+        .client-item:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.1);
+            border-color: #d4af37;
+        }
+
+        .client-item h4 {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .client-item p {
+            color: #a0b0a0;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+
+        .client-item-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .admin-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 20px;
+        }
+
+        .admin-actions-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        .admin-actions-row .btn {
+            width: 100%;
+            margin: 0;
+        }
+
+        .scan-area {
+            text-align: center;
+            padding: 40px 15px;
+            background: linear-gradient(135deg, #2a3a2a 0%, #1a2a1a 100%);
+            border-radius: 12px;
+            border: 2px dashed #5a6a5a;
+            margin: 20px 0;
+        }
+
+        .scan-area .camera-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: #6a7a6a;
+        }
+
+        .login-form {
+            max-width: 100%;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #2a3a2a 0%, #1a2a1a 100%);
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            border: 1px solid #4a5a4a;
+        }
+
+        .stat-card h3 {
+            font-size: 24px;
+            font-weight: 300;
+            margin-bottom: 6px;
+            color: #d4af37;
+        }
+
+        .stat-card p {
+            color: #a0b0a0;
+            font-size: 11px;
+        }
+
+        .mobile-actions {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .mobile-actions .btn {
+            width: 100%;
+            margin: 0;
+            padding: 10px;
+            font-size: 12px;
+        }
+
+        .client-access-mobile {
+            background: linear-gradient(135deg, #1a2a1a 0%, #0a1a0a 100%);
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 15px;
+            border: 1px solid #3a4a3a;
+            opacity: 0.85;
+        }
+
+        .client-access-mobile h3 {
+            text-align: center;
+            margin-bottom: 10px;
+            font-weight: 200;
+            font-size: 16px;
+            color: #b0c0b0;
+        }
+
+        .client-access-mobile p {
+            text-align: center;
+            color: #80a080;
+            font-size: 12px;
+            margin-bottom: 15px;
+        }
+
+        .client-access-mobile input {
+            background: #1f2f1f;
+            border-color: #4a5a4a;
+            font-size: 13px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .client-access-mobile .btn {
+            background: linear-gradient(135deg, #2a3a2a 0%, #1a2a1a 100%);
+            border-color: #4a5a4a;
+            font-size: 13px;
+            padding: 10px 20px;
+        }
+
+        .reward-card {
+            background: linear-gradient(135deg, #2a4a2a 0%, #1a3a1a 100%);
+            border: 1px solid #5a7a5a;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .reward-card h4 {
+            color: #7ac67a;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        .reward-card p {
+            color: #b3d9b3;
+            font-size: 13px;
+        }
+
+        .error-card {
+            background: linear-gradient(135deg, #4a2c2c 0%, #332222 100%);
+            border: 1px solid #553333;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .error-card h4 {
+            color: #ff6b6b;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        .error-card p {
+            color: #ffaaaa;
+            font-size: 13px;
+        }
+
+        /* Optimisations spécifiques mobile */
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .page {
+                padding: 15px;
+            }
+            
+            .ghost-logo h1 {
+                font-size: 28px;
+            }
+            
+            .page-title {
+                font-size: 20px;
+            }
+            
+            .stats {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .page-btn {
+                font-size: 10px;
+                padding: 6px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="page-selector">
+            <button class="page-btn active" onclick="showPage('home')">Accueil</button>
+            <button class="page-btn" onclick="showPage('client')">Client</button>
+            <button class="page-btn" onclick="showPage('admin')">Admin</button>
+            <button class="page-btn" onclick="showPage('create')">Créer</button>
+            <button class="page-btn" onclick="showPage('scan')">Scanner</button>
+        </div>
+
+        <!-- Page d'accueil -->
+        <div class="page active" id="home">
+            <div class="ghost-logo">
+                <h1>GHOST FIDELITY</h1>
+                <p>Programme de fidélité premium</p>
+            </div>
+            
+            <div class="card">
+                <h2 style="text-align: center; margin-bottom: 15px; font-weight: 300; font-size: 20px;">Bienvenue</h2>
+                <p style="text-align: center; color: #888; margin-bottom: 20px; font-size: 14px;">
+                    Découvrez notre programme de fidélité exclusif. Collectez des visites et bénéficiez de récompenses exceptionnelles.
+                </p>
+                
+                <div class="login-form">
+                    <div class="form-group">
+                        <label for="admin-login">Code d'accès administrateur</label>
+                        <input type="password" id="admin-login" placeholder="Entrez votre code d'accès">
+                    </div>
+                    <div style="text-align: center;">
+                        <button class="btn btn-primary">Connexion admin</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="client-access-mobile">
+                <h3>Accès client</h3>
+                <p>Vous avez déjà un compte ? Entrez votre identifiant pour consulter vos visites</p>
+                <div class="form-group">
+                    <input type="text" id="client-uuid" placeholder="Identifiant client">
+                </div>
+                <div style="text-align: center;">
+                    <button class="btn">Accéder à mon compte</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page client -->
+        <div class="page" id="client">
+            <div class="page-title">Profil Client</div>
+            
+            <div class="client-info">
+                <h2>Jean Dupont</h2>
+                <p>jean.dupont@email.com</p>
+            </div>
+            
+            <div class="qr-code">
+                <span>QR CODE<br>CLIENT</span>
+            </div>
+            
+            <div class="visits-counter">
+                <h3>Visites effectuées</h3>
+                <div class="count">7</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 70%;"></div>
+                </div>
+                <p style="color: #888; font-size: 13px;">3 visites restantes pour une coupe gratuite</p>
+            </div>
+            
+            <!-- Actions admin (visibles uniquement si connecté) -->
+            <div class="admin-actions">
+                <button class="btn btn-primary">+ Ajouter une visite</button>
+                <div class="admin-actions-row">
+                    <button class="btn">Modifier les infos</button>
+                    <button class="btn btn-danger">Supprimer client</button>
+                </div>
+            </div>
+            
+            <div class="reward-card">
+                <h4>🎉 Coupe gratuite disponible !</h4>
+                <p>Ce client a atteint 10 visites et peut bénéficier d'une coupe gratuite.</p>
+            </div>
+        </div>
+
+        <!-- Dashboard admin -->
+        <div class="page" id="admin">
+            <div class="page-title">Dashboard Admin</div>
+            
+            <div class="stats">
+                <div class="stat-card">
+                    <h3>247</h3>
+                    <p>Clients actifs</p>
+                </div>
+                <div class="stat-card">
+                    <h3>1,843</h3>
+                    <p>Visites ce mois</p>
+                </div>
+                <div class="stat-card">
+                    <h3>34</h3>
+                    <p>Coupes offertes</p>
+                </div>
+            </div>
+            
+            <input type="text" class="search-bar" placeholder="Rechercher un client par nom ou UUID...">
+            
+            <div class="mobile-actions">
+                <button class="btn btn-primary">+ Nouveau client</button>
+                <button class="btn">📱 Scanner QR</button>
+            </div>
+            
+            <div class="client-list">
+                <div class="client-item">
+                    <div>
+                        <h4>Marie Martin</h4>
+                        <p>marie.martin@email.com • 8 visites</p>
+                    </div>
+                    <div class="client-item-actions">
+                        <button class="btn btn-small">Voir</button>
+                        <button class="btn btn-primary btn-small">+1</button>
+                    </div>
+                </div>
+                
+                <div class="client-item">
+                    <div>
+                        <h4>Pierre Durand</h4>
+                        <p>pierre.durand@email.com • 12 visites • 🎁 Coupe gratuite</p>
+                    </div>
+                    <div class="client-item-actions">
+                        <button class="btn btn-small">Voir</button>
+                        <button class="btn btn-primary btn-small">+1</button>
+                    </div>
+                </div>
+                
+                <div class="client-item">
+                    <div>
+                        <h4>Sophie Leclerc</h4>
+                        <p>sophie.leclerc@email.com • 3 visites</p>
+                    </div>
+                    <div class="client-item-actions">
+                        <button class="btn btn-small">Voir</button>
+                        <button class="btn btn-primary btn-small">+1</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page création client -->
+        <div class="page" id="create">
+            <div class="page-title">Créer un client</div>
+            
+            <div class="card">
+                <form>
+                    <div class="form-group">
+                        <label for="nom">Nom *</label>
+                        <input type="text" id="nom" placeholder="Nom du client" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="prenom">Prénom *</label>
+                        <input type="text" id="prenom" placeholder="Prénom du client" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email *</label>
+                        <input type="email" id="email" placeholder="adresse@email.com" required>
+                    </div>
+                    
+                    <div class="admin-actions">
+                        <button class="btn btn-primary" type="submit">Créer le client</button>
+                        <button class="btn" type="button">Annuler</button>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Aperçu du QR code généré -->
+            <div class="card" style="text-align: center;">
+                <h3 style="margin-bottom: 15px; font-weight: 300; font-size: 18px;">QR Code généré</h3>
+                <div class="qr-code">
+                    <span>QR CODE<br>NOUVEAU CLIENT</span>
+                </div>
+                <p style="color: #888; font-size: 13px;">Le client pourra scanner ce code pour accéder à son profil</p>
+            </div>
+        </div>
+
+        <!-- Page scan -->
+        <div class="page" id="scan">
+            <div class="page-title">Scanner QR Code</div>
+            
+            <div class="scan-area">
+                <div class="camera-icon">📷</div>
+                <h3 style="margin-bottom: 15px; font-weight: 300; font-size: 18px;">Scanner un QR Code client</h3>
+                <p style="color: #888; margin-bottom: 20px; font-size: 13px;">
+                    Positionnez le QR code du client devant la caméra pour accéder automatiquement à son profil.
+                </p>
+                <button class="btn btn-primary">Activer la caméra</button>
+            </div>
+            
+            <div class="card">
+                <h4 style="margin-bottom: 12px; font-weight: 300; font-size: 16px;">Ou saisir manuellement</h4>
+                <div class="form-group">
+                    <label for="manual-uuid">UUID du client</label>
+                    <input type="text" id="manual-uuid" placeholder="Entrez l'identifiant unique du client">
+                </div>
+                <div style="text-align: center;">
+                    <button class="btn">Rechercher</button>
+                </div>
+            </div>
+            
+            <!-- Message d'erreur exemple -->
+            <div class="error-card">
+                <h4>❌ Client introuvable</h4>
+                <p>L'identifiant scanné ne correspond à aucun client enregistré. Veuillez vérifier le QR code ou créer un nouveau client.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showPage(pageId) {
+            // Masquer toutes les pages
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(page => page.classList.remove('active'));
+            
+            // Supprimer la classe active de tous les boutons
+            const buttons = document.querySelectorAll('.page-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            // Afficher la page sélectionnée
+            document.getElementById(pageId).classList.add('active');
+            
+            // Activer le bouton correspondant
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>
