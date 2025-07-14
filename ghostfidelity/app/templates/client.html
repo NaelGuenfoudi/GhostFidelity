@@ -1,72 +1,149 @@
-{% extends 'base.html' %} {% block content %}
+{% extends 'base.html' %}
+
+{% block content %}
 <div class="page active" id="client">
   <div class="page-title">Profil Client</div>
 
   <!-- Infos client -->
   <div class="client-info">
-    <h2>{{ client.prenom }} {{ client.nom }}</h2>
-    <p>{{ client.email }}</p>
-  </div>
+  <h2>{{ client.prenom }} {{ client.nom }}</h2>
+  <p>{{ client.email }}</p>
+  <p>Date de naissance : {{ client.birthday_date.strftime('%d/%m/%Y') }}</p>
+
+  {% set today = today_date %}
+  {% set birthday_this_year = client.birthday_date.replace(year=today.year) %}
+  {% if birthday_this_year < today %}
+    {% set next_birthday = birthday_this_year.replace(year=today.year + 1) %}
+  {% else %}
+    {% set next_birthday = birthday_this_year %}
+  {% endif %}
+
+  {% set days_remaining = (next_birthday - today).days %}
+
+  {% if days_remaining == 0 %}
+    <p>🎂 Aujourd’hui c’est l’anniversaire de ce client ! Une coupe gratuite est offerte 🥳</p>
+  {% else %}
+    <p>🎁 Coupe gratuite dans {{ days_remaining }} jour{{ 's' if days_remaining > 1 else '' }} (à son anniversaire).</p>
+  {% endif %}
+</div>
+
 
   <!-- QR code -->
   <div class="qr-code">
     <img src="data:image/png;base64,{{ qr_base64 }}" alt="QR Code Client" class="qr-img" />
-</div>
+  </div>
 
   <!-- Visites -->
   <div class="visits-counter">
     <h3>Visites globales effectuées</h3>
     <div class="count">{{ client.nombre_visites }}</div>
-    <h3>Visites effectuées depuis la derniere coupe offerte</h3>
+
+    <h3>Visites effectuées depuis la dernière coupe offerte</h3>
     <div class="count">{{ client.avancement_visite }}</div>
+
+    <!-- Progression coupe gratuite -->
     <div class="progress-bar">
       <div
         class="progress-fill"
         style="width: {{ (client.avancement_visite / 10 * 100)|round(0) }}%;"
       ></div>
     </div>
+
     <p style="color: #8a9bc0; font-size: 13px">
-      {% if client.avancement_visite == 9 %} 🎁 Prochaine visite offerte ! {%
-      else %} {{ 10 - client.avancement_visite }} visite{{ 's' if (10 -
-      client.avancement_visite) > 1 else '' }} restante{{ 's' if (10 -
-      client.avancement_visite) > 1 else '' }} avant la coupe gratuite {% endif
-      %}
+      {% if client.avancement_visite == 9 %}
+        🎁 Prochaine visite offerte !
+      {% else %}
+        {% set restantes = 10 - client.avancement_visite %}
+        {{ restantes }} visite{{ 's' if restantes > 1 else '' }} restante{{ 's' if restantes > 1 else '' }} avant la coupe gratuite
+      {% endif %}
     </p>
+
+    <!-- Réduction 14.99€ – seulement si cycle en cours est < 6 -->
+    {% set cycle = client.avancement_visite % 10 %}
+    {% if cycle <= 5 %}
+      <!-- Barre de progression réduction -->
+      {% set reduction_progress = (cycle / 5 * 100)|round(0) %}
+      <div class="progress-bar">
+        <div
+          class="progress-fill"
+          style="width: {{ reduction_progress }}%;"
+        ></div>
+      </div>
+
+      <!-- Texte réduction -->
+      <p style="color: #8a9bc0; font-size: 13px">
+        {% if cycle == 5 %}
+          🎁 Cette visite est en réduction à 14.99€ !
+        {% else %}
+          {% set restantes = 5 - cycle %}
+          {{ restantes }} visite{{ 's' if restantes > 1 else '' }} restante{{ 's' if restantes > 1 else '' }} avant la réduction à 14.99€ !
+        {% endif %}
+      </p>
+    {% endif %}
   </div>
 
-  <!-- Actions admin (affichées uniquement si admin connecté) -->
-  {% if session.get('admin') %}
-  <div class="admin-actions">
-    <form action="/client/{{ client.uuid }}/add-coupe" method="POST">
-      <button class="btn btn-primary" type="submit">
-        + Ajouter une visite
-      </button>
-    </form>
-    <div class="admin-actions-row">
-      <a href="/client/{{ client.uuid }}/modify" class="btn"
-        >Modifier les infos</a
-      >
-      <form
-        action="/client/{{ client.uuid }}/delete"
-        method="POST"
-        onsubmit="return confirm('Supprimer ce client ?');"
-        style="display: inline"
-      >
-        <button type="submit" class="btn btn-danger">Supprimer client</button>
-      </form>
-    </div>
-  </div>
-  {% endif %}
+  <!-- Récompenses -->
+  {% set cycle = client.avancement_visite % 10 %}
 
-  <!-- Récompense visible si avancement_visite == 9 -->
-  {% if client.avancement_visite == 9 %}
+{% if client.avancement_visite == 9 %}
   <div class="reward-card">
     <h4>🎉 Coupe gratuite disponible !</h4>
     <p>
-      Ce client a atteint 9 visites et peut bénéficier de la dixième coupe
-      offerte.
+      Ce client a atteint 9 visites et peut bénéficier de la dixième coupe offerte.
     </p>
   </div>
+{% elif client.avancement_visite == 0 and client.nombre_visites > 0 %}
+  <div class="reward-card">
+    <h4>🎁 Coupe gratuite appliquée</h4>
+    <p>
+      Ce client a reçu une coupe offerte lors de sa dernière visite.
+    </p>
+  </div>
+{% endif %}
+{% if isBirthday %}
+  <div class="reward-card">
+    <h4>🎁 Joyeux anniversaire ! Vu que c'est votre jour, on vous offre la coupe </h4>
+    <p>
+      Ce client bénéficie d’une coupe offert vu que c'est son anniversaire
+    </p>
+  </div>
+{% endif %}
+
+{% if cycle == 4 %}
+  <div class="reward-card">
+    <h4>🎉 Réduction à 14.99€ disponible !</h4>
+    <p>
+      Ce client peut bénéficier d’une coupe à tarif réduit (14.99€) lors de sa prochaine visite.
+    </p>
+  </div>
+{% elif cycle == 5 %}
+  <div class="reward-card">
+    <h4>🎁 Réduction à 14.99€ appliquée</h4>
+    <p>
+      Ce client bénéficie d’une coupe à tarif réduit (14.99€) sur cette visite.
+    </p>
+  </div>
+{% endif %}
+
+
+  <!-- Actions admin (affichées uniquement si admin connecté) -->
+  {% if session.get('admin') %}
+    <div class="admin-actions">
+      <form action="/client/{{ client.uuid }}/add-coupe" method="POST">
+        <button class="btn btn-primary" type="submit">+ Ajouter une visite</button>
+      </form>
+      <div class="admin-actions-row">
+        <a href="/client/{{ client.uuid }}/modify" class="btn">Modifier les infos</a>
+        <form
+          action="/client/{{ client.uuid }}/delete"
+          method="POST"
+          onsubmit="return confirm('Supprimer ce client ?');"
+          style="display: inline"
+        >
+          <button type="submit" class="btn btn-danger">Supprimer client</button>
+        </form>
+      </div>
+    </div>
   {% endif %}
 </div>
 {% endblock %}

@@ -9,7 +9,7 @@ class Client(db.Model):
     uuid = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     prenom = db.Column(db.String(100), nullable=False)
     nom = db.Column(db.String(100), nullable=False)
-    email = db.Column(db.String(255), unique=True, nullable=False)
+    email = db.Column(db.String(255), unique=True, nullable=True)
     birthday_date = db.Column(db.Date, nullable=False)
     nombre_visites = db.Column(db.Integer, default=0)
     avancement_visite = db.Column(db.Integer, default=0)

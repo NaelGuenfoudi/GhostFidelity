@@ -68,7 +68,7 @@
             {% if session.get('admin') %}
             <a
               href="/dashboard"
-              class="nav-link {% if request.path.startswith('/admin') and not request.path.startswith('/admin/create-client') %}active{% endif %}"
+              class="nav-link {% if request.path.startswith('/admin') and not request.path.startswith('/client/create') %}active{% endif %}"
             >
               <svg
                 viewBox="0 0 24 24"
@@ -93,8 +93,8 @@
             </a>
 
             <a
-              href="/admin/create-client"
-              class="nav-link {% if request.path == '/admin/create-client' %}active{% endif %}"
+              href="/client/create"
+              class="nav-link {% if request.path == '/client/create' %}active{% endif %}"
             >
               <svg
                 class="nav-icon"

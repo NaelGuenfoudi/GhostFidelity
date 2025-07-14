@@ -17,7 +17,7 @@
   <input
     type="text"
     class="search-bar"
-    placeholder="Rechercher un client par nom ou UUID..."
+    placeholder="Rechercher un client par nom ou email ..."
   />
 
   <div class="mobile-actions">
@@ -60,28 +60,48 @@
 <script>
 document.addEventListener("DOMContentLoaded", () => {
   const input = document.querySelector(".search-bar");
-  const items = document.querySelectorAll(".client-item");
+  const container = document.querySelector(".client-list");
+  const items = Array.from(document.querySelectorAll(".client-item"));
 
   input.addEventListener("input", () => {
     const value = input.value.toLowerCase();
 
-    items.forEach(item => {
+    const scored = items.map(item => {
       const nom = item.dataset.nom || "";
       const prenom = item.dataset.prenom || "";
       const email = item.dataset.email || "";
-      const uuid = item.dataset.uuid || "";
+      
 
-      const match =
-        nom.includes(value) ||
-        prenom.includes(value) ||
-        email.includes(value) ||
-        uuid.includes(value);
+      let score = -1;
 
-      item.style.display = match ? "" : "none";
+      if (prenom.startsWith(value)) score = 0;
+      else if (nom.startsWith(value)) score = 1;
+      else if (email.startsWith(value)) score = 2;
+
+      return { item, score };
     });
+
+    // Trie par score puis remet à jour le DOM
+    container.innerHTML = "";
+
+    scored
+      .filter(s => s.score !== -1)
+      .sort((a, b) => a.score - b.score)
+      .forEach(s => container.appendChild(s.item));
+
+    // Masquer ceux qui ne matchent pas
+    scored
+      .filter(s => s.score === -1)
+      .forEach(s => s.item.style.display = "none");
+
+    // Montrer ceux qui matchent
+    scored
+      .filter(s => s.score !== -1)
+      .forEach(s => s.item.style.display = "");
   });
 });
 </script>
+
 
 
 

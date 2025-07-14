@@ -54,7 +54,6 @@ def dashboard():
 
 @admin_bp.route('/client/create', methods=['GET', 'POST'])
 def create_client():
-   
     if not session.get('admin'):
         flash("Accès réservé à l’administrateur.", "error")
         return redirect(url_for('main.index'))
@@ -63,8 +62,9 @@ def create_client():
         nom = request.form.get('nom')
         prenom = request.form.get('prenom')
         email = request.form.get('email')
-        birthday_str = request.form.get('birthday_date')  # format yyyy-mm-dd
+        birthday_str = request.form.get('birthday_date')
 
+        # Vérification de champs
         if not nom or not prenom or not email or not birthday_str:
             flash("Tous les champs sont requis.", "error")
             return redirect(request.url)
@@ -75,21 +75,35 @@ def create_client():
             flash("Format de date invalide. Utilisez AAAA-MM-JJ.", "error")
             return redirect(request.url)
 
-        nouveau_client = Client(
-            uuid=str(uuid.uuid4()),
-            nom=nom,
-            prenom=prenom,
-            email=email,
-            birthday_date=birthday_date,
-            nombre_visites=0,
-            avancement_visite=0,
-            filleuls=0,
-            avancement_parrainage=0
-        )
+        # ✅ Vérifie si l'email existe déjà (clé unique)
+        if Client.query.filter_by(email=email).first():
+            flash("Cet email est déjà utilisé ❌", "error")
+            return redirect(request.url)
 
-        db.session.add(nouveau_client)
-        db.session.commit()
-        flash("Client créé avec succès ✅", "success")
-        return redirect(url_for('main.client_detail', uuid=nouveau_client.uuid))
+        try:
+            nouveau_client = Client(
+                uuid=str(uuid.uuid4()),
+                nom=nom,
+                prenom=prenom,
+                email=email,
+                birthday_date=birthday_date,
+                nombre_visites=0,
+                avancement_visite=0,
+                filleuls=0,
+                avancement_parrainage=0
+            )
+
+            db.session.add(nouveau_client)
+            db.session.commit()
+
+            flash("Client créé avec succès ✅", "success")
+            return redirect(url_for('main.client_detail', uuid=nouveau_client.uuid))
+
+        except Exception as e:
+            # 🔁 rollback obligatoire en cas d'erreur
+            db.session.rollback()
+            flash("Erreur lors de la création du client : email peut-être déjà existant ou autre problème.", "error")
+            return redirect(request.url)
 
     return render_template("admin/create_client.html")
+

@@ -4,6 +4,7 @@ from app.routes.main_bp import main_bp
 import qrcode
 import io
 import base64
+from datetime import date
 
 
 # 🔍 Liste de tous les clients
@@ -23,7 +24,16 @@ def client_detail(uuid):
     qr_img.save(buffered, format="PNG")
     qr_base64 = base64.b64encode(buffered.getvalue()).decode()
 
-    return render_template("client.html", client=client, qr_base64=qr_base64)
+    isBirthday = (
+    client.birthday_date.month == date.today().month and
+    client.birthday_date.day == date.today().day
+)
+    
+    if isBirthday:
+        
+        flash("🎉 Coupe offerte, c'est son anniversaire","success")
+
+    return render_template("client.html", client=client, qr_base64=qr_base64,isBirthday=isBirthday,today_date=date.today())
 
 
 
@@ -43,9 +53,12 @@ def add_coupe(uuid):
     if client.avancement_visite == 10:
         flash("🎉 Coupe offerte ! Le compteur fidélité est remis à zéro.", "success")
         client.avancement_visite = 0  # remise à zéro automatique
+    if client.avancement_visite == 5:
+        flash("🎉 Coupe en réduction à 14.99€", "success")
 
+    
     db.session.commit()
-    return redirect(url_for('main.client_detail', uuid=client.uuid))
+    return redirect(url_for('main.client_detail', uuid=client.uuid, isBirthday=isBirthday))
 
 # 📝 Mise à jour d'un client
 @main_bp.route('/client/<string:uuid>/edit', methods=['GET', 'POST'])
