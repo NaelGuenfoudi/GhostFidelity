@@ -5,9 +5,17 @@
 {% block content %}
 <div class="page active" id="home">
     <div class="ghost-logo">
-        <h1>GHOST FIDELITY</h1>
-        <p>Programme de fidélité premium</p>
+    <div class="logo-container">
+        <div class="logo-image">
+            <img src="{{ url_for('static', filename='images/logo_ghost.jpg') }}" alt="Ghost Fidelity Logo" class="gh-logo-img">
+        </div>
+        <div class="brand-text">
+            <h1>GHOST FIDELITY</h1>
+            <div class="subtitle">Coiffeur Barbier</div>
+        </div>
     </div>
+    <p>Programme de fidélité premium</p>
+</div>
      {% if not session.get('admin') %}
     <div class="card">
         <h2 style="text-align: center; margin-bottom: 15px; font-weight: 300; font-size: 20px;">Bienvenue</h2>

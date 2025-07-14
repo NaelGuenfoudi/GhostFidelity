@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="page active" id="create">
+    <div class="page-title">Créer un client</div>
+    
+    <div class="card">
+        <form method="POST">
+            <div class="form-group">
+                <label for="prenom">Prénom *</label>
+                <input type="text" id="prenom" name="prenom" placeholder="Prénom du client" required>
+            </div>
+
+            <div class="form-group">
+                <label for="nom">Nom *</label>
+                <input type="text" id="nom" name="nom" placeholder="Nom du client" required>
+            </div>
+            
+            
+
+            <div class="form-group">
+                <label for="birthday_date">Date de naissance *</label>
+                <input type="date" id="birthday_date" name="birthday_date" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email *</label>
+                <input type="email" id="email" name="email" placeholder="adresse@email.com" required>
+            </div>
+            
+            <div class="admin-actions">
+                <button class="btn btn-primary" type="submit">Créer le client</button>
+                <a href="{{ url_for('admin.dashboard') }}" class="btn">Annuler</a>
+            </div>
+        </form>
+    </div>
+    
+</div>
+{% endblock %}

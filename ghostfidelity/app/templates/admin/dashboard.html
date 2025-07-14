@@ -1,0 +1,88 @@
+{% extends 'base.html' %} {% block content %}
+
+<div class="page active" id="admin">
+  <div class="page-title">Dashboard Admin</div>
+
+  <div class="stats">
+    <div class="stat-card">
+      <h3>{{ stats.visites_total }}</h3>
+      <p>Visites en total</p>
+    </div>
+    <div class="stat-card">
+      <h3>{{ stats.coupes_offertes }}</h3>
+      <p>Coupes offertes</p>
+    </div>
+  </div>
+
+  <input
+    type="text"
+    class="search-bar"
+    placeholder="Rechercher un client par nom ou UUID..."
+  />
+
+  <div class="mobile-actions">
+    <a href="/client/create" class="btn btn-primary">+ Nouveau client</a>
+    <button class="btn">📱 Scanner QR</button>
+  </div>
+
+  <div class="client-list">
+    {% for client in clients %}
+    <div
+      class="client-item"
+      data-nom="{{ client.nom|lower }}"
+      data-prenom="{{ client.prenom|lower }}"
+      data-email="{{ client.email|lower }}"
+      data-uuid="{{ client.uuid|lower }}"
+    >
+      <div>
+        <h4>{{client.prenom}} {{ client.nom }}</h4>
+        <p>
+          {{ client.email }} • {{ client.nombre_visites }} visites {% if
+          client.avancement_visite == 9 %} • 🎁 Prochaine coupe offerte {% endif
+          %}
+        </p>
+      </div>
+      <div class="client-item-actions">
+        <a class="btn btn-small" href="/client/{{ client.uuid }}">Voir</a>
+        <form
+          action="/client/{{ client.uuid }}/add-coupe"
+          method="POST"
+          style="display: inline"
+        >
+          <button class="btn btn-primary btn-small" type="submit">+1</button>
+        </form>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const input = document.querySelector(".search-bar");
+  const items = document.querySelectorAll(".client-item");
+
+  input.addEventListener("input", () => {
+    const value = input.value.toLowerCase();
+
+    items.forEach(item => {
+      const nom = item.dataset.nom || "";
+      const prenom = item.dataset.prenom || "";
+      const email = item.dataset.email || "";
+      const uuid = item.dataset.uuid || "";
+
+      const match =
+        nom.includes(value) ||
+        prenom.includes(value) ||
+        email.includes(value) ||
+        uuid.includes(value);
+
+      item.style.display = match ? "" : "none";
+    });
+  });
+});
+</script>
+
+
+
+{% endblock %}

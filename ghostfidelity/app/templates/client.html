@@ -1,1 +1,72 @@
-<!-- Client Page -->
+{% extends 'base.html' %} {% block content %}
+<div class="page active" id="client">
+  <div class="page-title">Profil Client</div>
+
+  <!-- Infos client -->
+  <div class="client-info">
+    <h2>{{ client.prenom }} {{ client.nom }}</h2>
+    <p>{{ client.email }}</p>
+  </div>
+
+  <!-- QR code -->
+  <div class="qr-code">
+    <img src="data:image/png;base64,{{ qr_base64 }}" alt="QR Code Client" class="qr-img" />
+</div>
+
+  <!-- Visites -->
+  <div class="visits-counter">
+    <h3>Visites globales effectuées</h3>
+    <div class="count">{{ client.nombre_visites }}</div>
+    <h3>Visites effectuées depuis la derniere coupe offerte</h3>
+    <div class="count">{{ client.avancement_visite }}</div>
+    <div class="progress-bar">
+      <div
+        class="progress-fill"
+        style="width: {{ (client.avancement_visite / 10 * 100)|round(0) }}%;"
+      ></div>
+    </div>
+    <p style="color: #8a9bc0; font-size: 13px">
+      {% if client.avancement_visite == 9 %} 🎁 Prochaine visite offerte ! {%
+      else %} {{ 10 - client.avancement_visite }} visite{{ 's' if (10 -
+      client.avancement_visite) > 1 else '' }} restante{{ 's' if (10 -
+      client.avancement_visite) > 1 else '' }} avant la coupe gratuite {% endif
+      %}
+    </p>
+  </div>
+
+  <!-- Actions admin (affichées uniquement si admin connecté) -->
+  {% if session.get('admin') %}
+  <div class="admin-actions">
+    <form action="/client/{{ client.uuid }}/add-coupe" method="POST">
+      <button class="btn btn-primary" type="submit">
+        + Ajouter une visite
+      </button>
+    </form>
+    <div class="admin-actions-row">
+      <a href="/client/{{ client.uuid }}/modify" class="btn"
+        >Modifier les infos</a
+      >
+      <form
+        action="/client/{{ client.uuid }}/delete"
+        method="POST"
+        onsubmit="return confirm('Supprimer ce client ?');"
+        style="display: inline"
+      >
+        <button type="submit" class="btn btn-danger">Supprimer client</button>
+      </form>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Récompense visible si avancement_visite == 9 -->
+  {% if client.avancement_visite == 9 %}
+  <div class="reward-card">
+    <h4>🎉 Coupe gratuite disponible !</h4>
+    <p>
+      Ce client a atteint 9 visites et peut bénéficier de la dixième coupe
+      offerte.
+    </p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
